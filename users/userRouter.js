@@ -3,16 +3,21 @@ const express = require("express");
 // const logger = require("../server");
 const router = express.Router();
 const usersDB = require("./userDb.js");
+const postsDB = require("../posts/postDb.js");
 
 // const router = express.Router();
 // const
 
-router.post("/", (req, res) => {
-  console.log(req.body);
-  res.status(200).json(req.body);
+router.post("/", async (req, res) => {
+  try {
+    const db = await usersDB.add(req.body);
+    res.status(200).json(req.body);
+  } catch (error) {
+    res.status(500).json({ message: "error adding" });
+  }
 });
 
-router.post("/:id/posts", (req, res) => {});
+router.post("/:id/posts", async (req, res) => {});
 
 // get
 router.get("/", async (req, res) => {
@@ -34,40 +39,30 @@ router.get("/:id", validateUserId, async (req, res) => {
   }
 });
 
-// router.get("/:id/posts", async, (req, res) => {
-//     const { userId } = req.params;
-//     try {
-
-//     } catch (err) {
-//         res.status(500).json({message: "could not find post"})
-//     }
-// });
-
 // remove()
-// router.delete("/:id", (req, res) => {
-//   const { id } = req.params;
-//   const db = usersDB.remove(id).then()(removed => {
-//     if (removed === 0) {
-//       res.status(400).json({ message: "incorrect id" });
-//     } else {
-//       res.status(200).json({ message: "removed user" });
-//     }
-//   });
-// });
-
-router.delete("/:id", async (req, res) => {
-  // const { id } = req.params;
-  try {
-    const id = await usersDB.remove(req.params.id);
-    if (count > 0) {
+router.delete("/:id", (req, res) => {
+  usersDB.remove(req.params.id).then(deleted => {
+    if (deleted && deleted > 0) {
       res.status(200).json({ message: "deleted" });
     } else {
-      res.status(404).json({ message: "couldn't be deleted" });
+      res.status(404).json({ message: "could not delete" });
     }
-  } catch (error) {
-    res.status(500).json({ message: "error on delete" });
-  }
+  });
 });
+
+// router.delete("/:id", async (req, res) => {
+//   // const { id } = req.params;
+//   try {
+//     const id = await usersDB.remove(req.params.id);
+//     if (count > 0) {
+//       res.status(200).json({ message: "deleted" });
+//     } else {
+//       res.status(404).json({ message: "couldn't be deleted" });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: "error on delete" });
+//   }
+// });
 
 router.put("/:id", (req, res) => {});
 
@@ -91,12 +86,12 @@ function validateUserId(req, res, next) {
       if (!user) {
         res.status(400).json({ message: "invalid user id" });
       } else {
-        req.user = user.id;
+        req.user = user;
         next();
       }
     })
     .catch(err => {
-      console.log(`huh`, err);
+      console.log(err);
       res.status(500).json({ message: "user could not be retrieved" });
     });
 }
