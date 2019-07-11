@@ -14,6 +14,7 @@ router.post("/", (req, res) => {
 
 router.post("/:id/posts", (req, res) => {});
 
+// get
 router.get("/", async (req, res) => {
   try {
     const db = await usersDB.get(req.query);
@@ -23,30 +24,81 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", (req, res) => {
-  const db = DB.getById(req.user);
+// getById
+router.get("/:id", validateUserId, async (req, res) => {
   try {
-    let user = Users.getById(req.user);
+    let user = await usersDB.getById(req.user);
     res.status(200).json(user);
   } catch (err) {
-    res.status(400).json({ message: "error2" });
+    res.status(400).json({ message: "error getting id" });
   }
 });
 
-router.get("/:id/posts", (req, res) => {});
+// router.get("/:id/posts", async, (req, res) => {
+//     const { userId } = req.params;
+//     try {
 
-router.delete("/:id", (req, res) => {});
+//     } catch (err) {
+//         res.status(500).json({message: "could not find post"})
+//     }
+// });
+
+// remove()
+// router.delete("/:id", (req, res) => {
+//   const { id } = req.params;
+//   const db = usersDB.remove(id).then()(removed => {
+//     if (removed === 0) {
+//       res.status(400).json({ message: "incorrect id" });
+//     } else {
+//       res.status(200).json({ message: "removed user" });
+//     }
+//   });
+// });
+
+router.delete("/:id", async (req, res) => {
+  // const { id } = req.params;
+  try {
+    const id = await usersDB.remove(req.params.id);
+    if (count > 0) {
+      res.status(200).json({ message: "deleted" });
+    } else {
+      res.status(404).json({ message: "couldn't be deleted" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "error on delete" });
+  }
+});
 
 router.put("/:id", (req, res) => {});
 
 //custom middleware
 
+// function validateUserId(req, res, next) {
+//   if (req.params.id) {
+//     next();
+//   } else {
+//     res.status(400).json("need info (id)");
+//   }
+// }
+
 function validateUserId(req, res, next) {
-  if (req.params.id) {
-    next();
-  } else {
-    res.status(400).json("need info (id)");
-  }
+  const id = req.params.id;
+
+  usersDB
+    .getById(id)
+    .then(user => {
+      console.log(user);
+      if (!user) {
+        res.status(400).json({ message: "invalid user id" });
+      } else {
+        req.user = user.id;
+        next();
+      }
+    })
+    .catch(err => {
+      console.log(`huh`, err);
+      res.status(500).json({ message: "user could not be retrieved" });
+    });
 }
 
 function validateUser(req, res, next) {
