@@ -13,13 +13,13 @@ You are allowed, and **encouraged**, to collaborate with other peers. Please fol
 - [x] Create a forked copy of this project.
 - [~] Add your project manager as collaborator on Github.
 - [x] Clone your OWN version of the repository.
-- [~] Create a new branch: git checkout -b `<firstName-lastName>`.
-- [ ] Implement the project on your newly created `<firstName-lastName>` branch, committing changes regularly.
-- [ ] Push commits: git push origin `<firstName-lastName>`.
+- [x] Create a new branch: git checkout -b `<firstName-lastName>`.
+- [x] Implement the project on your newly created `<firstName-lastName>` branch, committing changes regularly.
+- [~] Push commits: git push origin `<firstName-lastName>`.
 
 Follow these steps for completing your project.
 
-- [ ] Submit a Pull-Request to merge <firstName-lastName> Branch into master (student's Repository). **Please don't merge your own pull request**
+- [~] Submit a Pull-Request to merge <firstName-lastName> Branch into master (student's Repository). **Please don't merge your own pull request**
 - [ ] Add your project manager as a reviewer on the pull-request
 - [ ] Your project manager will count the project as complete by merging the branch back into master.
 - [ ] Do your magic!
@@ -88,6 +88,8 @@ The _Database Schemas_ for the `users` and `posts` resources are:
 | user_id | unsigned integer | required, must be the `id` of an existing `user`    |
 
 We have provided test data for the resources.
+
+====================================================================================
 
 ## Stretch Goals
 
