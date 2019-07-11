@@ -1,12 +1,16 @@
 const express = require("express");
 
+// const logger = require("../server");
 const router = express.Router();
 const usersDB = require("./userDb.js");
 
 // const router = express.Router();
 // const
 
-router.post("/", (req, res) => {});
+router.post("/", (req, res) => {
+  console.log(req.body);
+  res.status(200).json(req.body);
+});
 
 router.post("/:id/posts", (req, res) => {});
 
@@ -37,10 +41,28 @@ router.put("/:id", (req, res) => {});
 
 //custom middleware
 
-function validateUserId(req, res, next) {}
+function validateUserId(req, res, next) {
+  if (req.params.id) {
+    next();
+  } else {
+    res.status(400).json("need info (id)");
+  }
+}
 
-function validateUser(req, res, next) {}
+function validateUser(req, res, next) {
+  if (req.body.name) {
+    next();
+  } else {
+    res.status(400).json("need info (name)");
+  }
+}
 
-function validatePost(req, res, next) {}
+function validatePost(req, res, next) {
+  if (req.body.text) {
+    next();
+  } else {
+    res.status(400).json("need more info (body)");
+  }
+}
 
 module.exports = router;
