@@ -8,16 +8,65 @@ const postsDB = require("../posts/postDb.js");
 // const router = express.Router();
 // const
 
-router.post("/", async (req, res) => {
-  try {
-    const db = await usersDB.add(req.body);
-    res.status(200).json(req.body);
-  } catch (error) {
-    res.status(500).json({ message: "error adding" });
-  }
+// router.post("/", async (req, res) => {
+//   const { name } = req.body;
+//   console.log("<---=- USER -=----->\n", name);
+//   try {
+//     const db = await usersDB.insert(name);
+//     res.status(200).json(db);
+//   } catch (error) {
+//     res.status(500).json({ message: "error adding" });
+//   }
+// });
+
+router.post("/posting", (req, res) => {
+  const id = req.params.id;
+  const { name } = req.body;
+  
+  console.log("<-=-=-REQ=-=-=>\n", name);
+  console.log("<-=-=-REQ=-=-=>\n", req.body);
+  usersDB
+    .insert({ name })
+    .then(db => {
+      res.status(201).json(db);
+    })
+    .catch(err => {
+      "error:", err;
+    });
 });
 
-router.post("/:id/posts", async (req, res) => {});
+// router.post("/:id/posts", (req, res) => {
+//   const dbInfo = req.body;
+//   const { name } = req.body;
+
+//   usersDB
+//     .insert(dbInfo)
+//     .then(db => {
+//       if (!name) {
+//         res.status(400).json({ message: "need id and message" });
+//       } else {
+//         res.status(201).json(db);
+//       }
+//     })
+//     .catch(error => {
+//       res.status(500).json({ message: "dude, error." });
+//     });
+// });
+
+// router.post("/:id/posts", (req, res) => {
+//   let post = req.body;
+//   const { id } = req.params;
+//   post.postsDB = id;
+
+//   postsDB
+//     .insert(post)
+//     .then(post => {
+//       res.status(201).json(post);
+//     })
+//     .catch(err => {
+//       res.status(500).json({ message: "error adding post." });
+//     });
+// });
 
 // get
 router.get("/", async (req, res) => {
@@ -42,8 +91,8 @@ router.get("/:id", validateUserId, async (req, res) => {
 // remove()
 router.delete("/:id", (req, res) => {
   usersDB.remove(req.params.id).then(deleted => {
-    if (deleted && deleted > 0) {
-      res.status(200).json({ message: "deleted" });
+    if (deleted > 0) {
+      res.status(200).json({ message: `deleted ${deleted} record` });
     } else {
       res.status(404).json({ message: "could not delete" });
     }
@@ -96,13 +145,25 @@ function validateUserId(req, res, next) {
     });
 }
 
-function validateUser(req, res, next) {
-  if (req.body.name) {
-    next();
-  } else {
-    res.status(400).json("need info (name)");
-  }
-}
+// function validateUser(req, res, next) {
+//   if (req.body.name) {
+//     next();
+//   } else {
+//     res.status(400).json("need info (name)");
+//   }
+// }
+
+// function validateUser(req, res, next) {
+//   const { name } = req.body;
+//   if (Object.keys(req.body).length === 0) {
+//     res.status(400).json({ message: "needs user data" });
+//   } else if (!name) {
+//     res.status(400).json({ message: "needs a name" });
+//   } else {
+//     user = req.body;
+//     next();
+//   }
+// }
 
 function validatePost(req, res, next) {
   if (req.body.text) {
